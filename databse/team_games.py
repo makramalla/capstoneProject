@@ -1,14 +1,14 @@
 import pandas as pd
 
 df = pd.read_csv('Match.csv')
-#print(df.head())
 
+#Chosen team id = Barcelona
 team_id = 8634
 
-
+#filter the team's games within the dataset
 df_team = df.loc[(df['home_team_api_id'] == team_id) | (df['away_team_api_id'] == team_id) ]
 
-
+#Rename Home and away players to team and opposition team player wihtout changeg the players 
 for num in range(1, 12):
 
   home_player = "home_player_" + str(num) 
@@ -19,7 +19,7 @@ for num in range(1, 12):
   df_team.rename(index=str, columns={home_player:team_player}, inplace=True)
   df_team.rename(index=str, columns={away_player:opp_player}, inplace=True)
 
-
+#Initialize new features
 df_team ["team_goal_scored"] =0
 df_team ["team_goal_conceded"] =0
 df_team ["team_win"] =0
@@ -30,7 +30,7 @@ df_team["draw"] =0
 
 for index, row in df_team.iterrows():
   
-  #Players
+# etting Team and Opposition players
   for num in range(1, 12):
 
     team_player_or = "team_player_" + str(num)
@@ -45,7 +45,7 @@ for index, row in df_team.iterrows():
     df_team.at[index, team_player_or]  = team_player_act
     df_team.at[index, opp_player_or] = opp_player_act
 
-  #Goals and Wins
+  #Calculate Goals and Wins
 
   if df_team.at[index, 'home_team_api_id'] == team_id:
     team_goal_scored = df_team.at[index, "home_team_goal"]
@@ -70,4 +70,5 @@ for index, row in df_team.iterrows():
 
 print (df_team)
 
+#Saving outcome to a new csv file
 df_team.to_csv("team_games.csv")
